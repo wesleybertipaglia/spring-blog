@@ -1,4 +1,6 @@
 package com.wesleybertipaglia.blog.dtos;
 
-public record SignUpResponse(String username, String role) {
+import java.util.UUID;
+
+public record SignUpResponse(UUID id, String username, String role) {
 }
