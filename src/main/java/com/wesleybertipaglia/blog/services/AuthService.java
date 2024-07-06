@@ -25,15 +25,17 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    JwtEncoder jwtEncoder;
+    @Autowired
+    private JwtEncoder jwtEncoder;
 
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public Optional<SignInResponse> signin(SignInRequest signInRequest) {
         User user = userRepository.findByUsername(signInRequest.username());
 
-        if (user == null || !user.getPassword().equals(signInRequest.password())) {
+        if (user == null || !passwordEncoder.matches(signInRequest.password(), user.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
         }
 
@@ -45,6 +47,7 @@ public class AuthService {
                 .subject(user.getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expirationTime))
+                .claim("role", user.getRole())
                 .build();
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
@@ -61,6 +64,6 @@ public class AuthService {
         User user = new User(signUpRequest.username(), passwordEncoder.encode(signUpRequest.password()),
                 signUpRequest.role());
         userRepository.save(user);
-        return Optional.of(new SignUpResponse(signUpRequest.username(), signUpRequest.role()));
+        return Optional.of(new SignUpResponse(user.getId(), signUpRequest.username(), signUpRequest.role()));
     }
 }
