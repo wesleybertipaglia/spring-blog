@@ -28,6 +28,22 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public User() {
+    }
+
+    public User(UUID id, String username, String password, Roles role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = Roles.valueOf(role);
+    }
+
     public UUID getId() {
         return id;
     }
