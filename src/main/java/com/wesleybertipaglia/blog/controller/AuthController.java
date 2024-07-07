@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wesleybertipaglia.blog.dtos.SignInRequest;
 import com.wesleybertipaglia.blog.dtos.SignInResponse;
 import com.wesleybertipaglia.blog.dtos.SignUpRequest;
-import com.wesleybertipaglia.blog.dtos.SignUpResponse;
-import com.wesleybertipaglia.blog.services.AuthService;
+import com.wesleybertipaglia.blog.dtos.UserResponse;
+import com.wesleybertipaglia.blog.service.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponse> signup(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<UserResponse> signup(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.of(authService.signup(signUpRequest));
     }
 }
