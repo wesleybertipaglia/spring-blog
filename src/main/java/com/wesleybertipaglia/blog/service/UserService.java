@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.wesleybertipaglia.blog.dtos.user.UserResponse;
+import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.mapper.UserMapper;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 
@@ -17,7 +17,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> listUsers(int page, int size) {
+    public Page<UserResponseDTO> listUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findAll(pageable).map(UserMapper::convertToDTO);
     }

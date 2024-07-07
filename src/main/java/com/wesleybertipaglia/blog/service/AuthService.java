@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.wesleybertipaglia.blog.dtos.auth.SignInRequestDTO;
 import com.wesleybertipaglia.blog.dtos.auth.SignInResponseDTO;
 import com.wesleybertipaglia.blog.dtos.auth.SignUpRequestDTO;
-import com.wesleybertipaglia.blog.dtos.user.UserResponse;
+import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 
@@ -56,7 +56,7 @@ public class AuthService {
     }
 
     @Transactional
-    public Optional<UserResponse> signup(SignUpRequestDTO signUpRequest) {
+    public Optional<UserResponseDTO> signup(SignUpRequestDTO signUpRequest) {
         if (userRepository.findByUsername(signUpRequest.username()) != null) {
             throw new BadCredentialsException("Username already exists");
         }
@@ -64,6 +64,6 @@ public class AuthService {
         User user = new User(signUpRequest.username(), passwordEncoder.encode(signUpRequest.password()),
                 signUpRequest.role());
         userRepository.save(user);
-        return Optional.of(new UserResponse(user.getId(), signUpRequest.username()));
+        return Optional.of(new UserResponseDTO(user.getId(), signUpRequest.username()));
     }
 }

@@ -1,10 +1,10 @@
 package com.wesleybertipaglia.blog.mapper;
 
-import com.wesleybertipaglia.blog.dtos.user.UserResponse;
+import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.model.User;
 
 public class UserMapper {
-    public static UserResponse convertToDTO(User user) {
+    public static UserResponseDTO convertToDTO(User user) {
         if (user == null) {
             return null;
         } else if (user.getId() == null) {
@@ -15,12 +15,10 @@ public class UserMapper {
             throw new IllegalArgumentException("User role is required");
         }
 
-        return new UserResponse(
-                user.getId(),
-                user.getUsername());
+        return new UserResponseDTO(user.getId(), user.getUsername());
     }
 
-    public static User convertToEntity(UserResponse userResponse) {
+    public static User convertToEntity(UserResponseDTO userResponse) {
         if (userResponse == null) {
             return null;
         } else if (userResponse.id() == null) {
@@ -29,8 +27,6 @@ public class UserMapper {
             throw new IllegalArgumentException("User username is required");
         }
 
-        return new User(
-                userResponse.id(),
-                userResponse.username());
+        return new User(userResponse.id(), userResponse.username());
     }
 }
