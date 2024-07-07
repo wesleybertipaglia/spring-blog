@@ -90,4 +90,38 @@ public class PostService {
 
         postRepository.delete(post);
     }
+
+    @Transactional
+    public void likePost(UUID id, String tokenSubject) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isEmpty()) {
+            throw new EntityNotFoundException("Post not found");
+        }
+
+        Post post = postOptional.get();
+        Optional<User> userOptional = userRepository.findById(UUID.fromString(tokenSubject));
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        post.setLikes(post.getLikes() + 1);
+        postRepository.save(post);
+    }
+
+    @Transactional
+    public void unlikePost(UUID id, String tokenSubject) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isEmpty()) {
+            throw new EntityNotFoundException("Post not found");
+        }
+
+        Post post = postOptional.get();
+        Optional<User> userOptional = userRepository.findById(UUID.fromString(tokenSubject));
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        post.setLikes(post.getLikes() - 1);
+        postRepository.save(post);
+    }
 }
