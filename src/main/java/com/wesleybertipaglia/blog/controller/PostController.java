@@ -58,16 +58,4 @@ public class PostController {
         postService.deletePost(id, token.getName());
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/{id}/like")
-    public ResponseEntity<Void> likePost(@PathVariable UUID id, JwtAuthenticationToken token) {
-        postService.likePost(id, token.getName());
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{id}/like")
-    public ResponseEntity<Void> unlikePost(@PathVariable UUID id, JwtAuthenticationToken token) {
-        postService.unlikePost(id, token.getName());
-        return ResponseEntity.noContent().build();
-    }
 }
