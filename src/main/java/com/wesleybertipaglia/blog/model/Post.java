@@ -33,6 +33,24 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public Post() {
+    }
+
+    public Post(UUID id, User creator, String title, String content) {
+        this.id = id;
+        this.creator = creator;
+        this.title = title;
+        this.content = content;
+        this.likes = 0;
+    }
+
+    public Post(User creator, String title, String content) {
+        this.creator = creator;
+        this.title = title;
+        this.content = content;
+        this.likes = 0;
+    }
+
     public UUID getId() {
         return id;
     }
