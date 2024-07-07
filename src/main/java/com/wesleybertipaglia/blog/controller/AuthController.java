@@ -2,7 +2,7 @@ package com.wesleybertipaglia.blog.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wesleybertipaglia.blog.dtos.auth.SignInRequest;
+import com.wesleybertipaglia.blog.dtos.auth.SignInRequestDTO;
 import com.wesleybertipaglia.blog.dtos.auth.SignInResponse;
 import com.wesleybertipaglia.blog.dtos.auth.SignUpRequest;
 import com.wesleybertipaglia.blog.dtos.user.UserResponse;
@@ -21,7 +21,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponse> signin(@RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<SignInResponse> signin(@RequestBody SignInRequestDTO signInRequest) {
         return ResponseEntity.of(authService.signin(signInRequest));
     }
 
