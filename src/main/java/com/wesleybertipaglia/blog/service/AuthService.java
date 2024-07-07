@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.wesleybertipaglia.blog.dtos.auth.SignInRequestDTO;
 import com.wesleybertipaglia.blog.dtos.auth.SignInResponseDTO;
-import com.wesleybertipaglia.blog.dtos.auth.SignUpRequest;
+import com.wesleybertipaglia.blog.dtos.auth.SignUpRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponse;
 import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.UserRepository;
@@ -56,7 +56,7 @@ public class AuthService {
     }
 
     @Transactional
-    public Optional<UserResponse> signup(SignUpRequest signUpRequest) {
+    public Optional<UserResponse> signup(SignUpRequestDTO signUpRequest) {
         if (userRepository.findByUsername(signUpRequest.username()) != null) {
             throw new BadCredentialsException("Username already exists");
         }
