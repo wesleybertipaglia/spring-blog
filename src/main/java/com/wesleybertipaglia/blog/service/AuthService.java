@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import com.wesleybertipaglia.blog.dtos.auth.SignInRequestDTO;
-import com.wesleybertipaglia.blog.dtos.auth.SignInResponse;
+import com.wesleybertipaglia.blog.dtos.auth.SignInResponseDTO;
 import com.wesleybertipaglia.blog.dtos.auth.SignUpRequest;
 import com.wesleybertipaglia.blog.dtos.user.UserResponse;
 import com.wesleybertipaglia.blog.model.User;
@@ -32,7 +32,7 @@ public class AuthService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
-    public Optional<SignInResponse> signin(SignInRequestDTO signInRequest) {
+    public Optional<SignInResponseDTO> signin(SignInRequestDTO signInRequest) {
         User user = userRepository.findByUsername(signInRequest.username());
 
         if (user == null || !passwordEncoder.matches(signInRequest.password(), user.getPassword())) {
@@ -52,7 +52,7 @@ public class AuthService {
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
 
-        return Optional.of(new SignInResponse(token, expirationTime));
+        return Optional.of(new SignInResponseDTO(token, expirationTime));
     }
 
     @Transactional
