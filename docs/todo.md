@@ -9,7 +9,7 @@
 - [x] Exception Handling
 - [ ] Testing
 - [ ] Versioning
-- [ ] Documentation
+- [x] Documentation
 - [ ] Middleware
 - [ ] Performance
 
