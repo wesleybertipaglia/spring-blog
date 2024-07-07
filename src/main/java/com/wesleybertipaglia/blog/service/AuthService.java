@@ -1,4 +1,4 @@
-package com.wesleybertipaglia.blog.services;
+package com.wesleybertipaglia.blog.service;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.wesleybertipaglia.blog.dtos.SignInRequest;
 import com.wesleybertipaglia.blog.dtos.SignInResponse;
 import com.wesleybertipaglia.blog.dtos.SignUpRequest;
-import com.wesleybertipaglia.blog.dtos.SignUpResponse;
+import com.wesleybertipaglia.blog.dtos.UserResponse;
 import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 
@@ -56,7 +56,7 @@ public class AuthService {
     }
 
     @Transactional
-    public Optional<SignUpResponse> signup(SignUpRequest signUpRequest) {
+    public Optional<UserResponse> signup(SignUpRequest signUpRequest) {
         if (userRepository.findByUsername(signUpRequest.username()) != null) {
             throw new BadCredentialsException("Username already exists");
         }
@@ -64,6 +64,6 @@ public class AuthService {
         User user = new User(signUpRequest.username(), passwordEncoder.encode(signUpRequest.password()),
                 signUpRequest.role());
         userRepository.save(user);
-        return Optional.of(new SignUpResponse(user.getId(), signUpRequest.username(), signUpRequest.role()));
+        return Optional.of(new UserResponse(user.getId(), signUpRequest.username()));
     }
 }
