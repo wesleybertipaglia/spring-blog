@@ -1,4 +1,4 @@
-package com.wesleybertipaglia.blog.dtos;
+package com.wesleybertipaglia.blog.dtos.user;
 
 import java.util.UUID;
 

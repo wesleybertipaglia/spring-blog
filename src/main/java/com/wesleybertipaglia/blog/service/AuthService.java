@@ -11,10 +11,10 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import com.wesleybertipaglia.blog.dtos.SignInRequest;
-import com.wesleybertipaglia.blog.dtos.SignInResponse;
-import com.wesleybertipaglia.blog.dtos.SignUpRequest;
-import com.wesleybertipaglia.blog.dtos.UserResponse;
+import com.wesleybertipaglia.blog.dtos.auth.SignInRequest;
+import com.wesleybertipaglia.blog.dtos.auth.SignInResponse;
+import com.wesleybertipaglia.blog.dtos.auth.SignUpRequest;
+import com.wesleybertipaglia.blog.dtos.user.UserResponse;
 import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 

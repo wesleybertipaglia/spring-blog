@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.wesleybertipaglia.blog.dtos.UserResponse;
+import com.wesleybertipaglia.blog.dtos.user.UserResponse;
 import com.wesleybertipaglia.blog.mapper.UserMapper;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 

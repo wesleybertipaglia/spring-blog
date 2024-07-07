@@ -1,6 +1,6 @@
 package com.wesleybertipaglia.blog.mapper;
 
-import com.wesleybertipaglia.blog.dtos.UserResponse;
+import com.wesleybertipaglia.blog.dtos.user.UserResponse;
 import com.wesleybertipaglia.blog.model.User;
 
 public class UserMapper {
