@@ -46,4 +46,48 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size);
         return postRepository.findAll(pageable).map(PostMapper::convertToDTO);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<PostResponseDTO> getPost(UUID id) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isEmpty()) {
+            throw new EntityNotFoundException("Post not found");
+        }
+
+        return Optional.of(PostMapper.convertToDTO(postOptional.get()));
+    }
+
+    @Transactional
+    public Optional<PostResponseDTO> updatePost(UUID id, PostCreateDTO postCreateDTO, String tokenSubject) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isEmpty()) {
+            throw new EntityNotFoundException("Post not found");
+        }
+
+        Post post = postOptional.get();
+        if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
+            throw new IllegalArgumentException("User is not the creator of the post");
+        }
+
+        post.setTitle(postCreateDTO.title());
+        post.setContent(postCreateDTO.content());
+        postRepository.save(post);
+
+        return Optional.of(PostMapper.convertToDTO(post));
+    }
+
+    @Transactional
+    public void deletePost(UUID id, String tokenSubject) {
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isEmpty()) {
+            throw new EntityNotFoundException("Post not found");
+        }
+
+        Post post = postOptional.get();
+        if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
+            throw new IllegalArgumentException("User is not the creator of the post");
+        }
+
+        postRepository.delete(post);
+    }
 }
