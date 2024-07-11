@@ -10,9 +10,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wesleybertipaglia.blog.dtos.comment.CommentResponseDTO;
 import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
+import com.wesleybertipaglia.blog.service.CommentService;
 import com.wesleybertipaglia.blog.service.UserService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +29,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping
     @PreAuthorize("permitAll()")
@@ -65,5 +70,13 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size,
             JwtAuthenticationToken token) {
         return ResponseEntity.ok(userService.listLikesOfCurrentUser(page, size, token.getName()));
+    }
+
+    @GetMapping("/me/comments")
+    public ResponseEntity<Page<CommentResponseDTO>> listCommentsOfCurrentUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            JwtAuthenticationToken token) {
+        return ResponseEntity.ok(commentService.listCommentsByUser(page, size, token.getName()));
     }
 }
