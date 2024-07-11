@@ -1,18 +1,21 @@
 package com.wesleybertipaglia.blog.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Set;
 
-@Entity
+@Entity(name = "posts")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,7 +28,8 @@ public class Post {
 
     private String content;
 
-    private int likes;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Like> likes;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -41,14 +45,12 @@ public class Post {
         this.creator = creator;
         this.title = title;
         this.content = content;
-        this.likes = 0;
     }
 
     public Post(User creator, String title, String content) {
         this.creator = creator;
         this.title = title;
         this.content = content;
-        this.likes = 0;
     }
 
     public UUID getId() {
@@ -83,11 +85,11 @@ public class Post {
         this.content = content;
     }
 
-    public int getLikes() {
+    public Set<Like> getLikes() {
         return likes;
     }
 
-    public void setLikes(int likes) {
+    public void setLikes(Set<Like> likes) {
         this.likes = likes;
     }
 

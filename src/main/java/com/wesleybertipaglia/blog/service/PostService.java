@@ -15,6 +15,7 @@ import com.wesleybertipaglia.blog.dtos.post.PostResponseDTO;
 import com.wesleybertipaglia.blog.mapper.PostMapper;
 import com.wesleybertipaglia.blog.model.Post;
 import com.wesleybertipaglia.blog.model.User;
+import com.wesleybertipaglia.blog.repository.LikeRepository;
 import com.wesleybertipaglia.blog.repository.PostRepository;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 
@@ -28,62 +29,57 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
     @Transactional
     public Optional<PostResponseDTO> createPost(PostCreateDTO postCreateDTO, String tokenSubject) {
-        Optional<User> userOptional = userRepository.findById(UUID.fromString(tokenSubject));
-        if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("User not found");
-        }
+        User user = userRepository.findById(UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Post post = PostMapper.convertToEntity(postCreateDTO, userOptional.get());
+        Post post = PostMapper.convertToEntity(postCreateDTO, user);
         postRepository.save(post);
 
-        return Optional.of(PostMapper.convertToDTO(post));
+        return Optional.of(PostMapper.convertToDTO(post, 0));
     }
 
     @Transactional(readOnly = true)
     public Page<PostResponseDTO> listPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return postRepository.findAll(pageable).map(PostMapper::convertToDTO);
+        return postRepository.findAll(pageable).map(post -> {
+            int likesCount = likeRepository.countByPostId(post.getId());
+            return PostMapper.convertToDTO(post, likesCount);
+        });
     }
 
     @Transactional(readOnly = true)
     public Optional<PostResponseDTO> getPost(UUID id) {
-        Optional<Post> postOptional = postRepository.findById(id);
-        if (postOptional.isEmpty()) {
-            throw new EntityNotFoundException("Post not found");
-        }
+        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-        return Optional.of(PostMapper.convertToDTO(postOptional.get()));
+        int likesCount = likeRepository.countByPostId(id);
+        return Optional.of(PostMapper.convertToDTO(post, likesCount));
     }
 
     @Transactional
     public Optional<PostResponseDTO> updatePost(UUID id, PostCreateDTO postCreateDTO, String tokenSubject) {
-        Optional<Post> postOptional = postRepository.findById(id);
-        if (postOptional.isEmpty()) {
-            throw new EntityNotFoundException("Post not found");
-        }
+        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-        Post post = postOptional.get();
         if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
-            throw new IllegalArgumentException("User is not the creator of the post");
+            throw new IllegalArgumentException("User is not the owner of the post");
         }
 
         post.setTitle(postCreateDTO.title());
         post.setContent(postCreateDTO.content());
         postRepository.save(post);
 
-        return Optional.of(PostMapper.convertToDTO(post));
+        int likesCount = likeRepository.countByPostId(post.getId());
+        return Optional.of(PostMapper.convertToDTO(post, likesCount));
     }
 
     @Transactional
     public void deletePost(UUID id, String tokenSubject) {
-        Optional<Post> postOptional = postRepository.findById(id);
-        if (postOptional.isEmpty()) {
-            throw new EntityNotFoundException("Post not found");
-        }
+        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-        Post post = postOptional.get();
         if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
             throw new IllegalArgumentException("User is not the creator of the post");
         }
