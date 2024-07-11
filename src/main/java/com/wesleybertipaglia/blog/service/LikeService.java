@@ -1,11 +1,23 @@
 package com.wesleybertipaglia.blog.service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
+import com.wesleybertipaglia.blog.mapper.LikeMapper;
+import com.wesleybertipaglia.blog.model.Like;
+import com.wesleybertipaglia.blog.model.Post;
+import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.LikeRepository;
 import com.wesleybertipaglia.blog.repository.PostRepository;
 import com.wesleybertipaglia.blog.repository.UserRepository;
+
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class LikeService {
@@ -18,4 +30,18 @@ public class LikeService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
+    public Optional<LikeResponseDTO> createLike(UUID postId, String tokenSubject) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        User user = userRepository.findById(UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Like like = new Like(user, post);
+
+        if (likeRepository.existsByUserIdAndPostId(user.getId(), post.getId())) {
+            throw new EntityExistsException("Like already exists");
+        }
+
+        return Optional.of(LikeMapper.convertToDTO(likeRepository.save(like)));
+    }
 }
