@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.service.UserService;
@@ -56,5 +57,13 @@ public class UserController {
     public ResponseEntity<Void> deleteCurrentUser(JwtAuthenticationToken token) {
         userService.deleteCurrentUser(token.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me/likes")
+    public ResponseEntity<Page<LikeResponseDTO>> listlikesOfCurrentUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            JwtAuthenticationToken token) {
+        return ResponseEntity.ok(userService.listLikesOfCurrentUser(page, size, token.getName()));
     }
 }
