@@ -72,4 +72,9 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(likeService.listLikesByPost(page, size, id));
     }
+
+    @PostMapping("/{id}/likes")
+    public ResponseEntity<LikeResponseDTO> likePost(@PathVariable UUID id, JwtAuthenticationToken token) {
+        return ResponseEntity.of(likeService.createLike(id, token.getName()));
+    }
 }
