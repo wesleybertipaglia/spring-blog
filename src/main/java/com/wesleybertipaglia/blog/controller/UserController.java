@@ -14,6 +14,7 @@ import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.service.UserService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,5 +50,11 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> updateCurrentUser(@RequestBody UserRequestDTO userRequestDTO,
             JwtAuthenticationToken token) {
         return ResponseEntity.of(userService.updateCurrentUser(userRequestDTO, token.getName()));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteCurrentUser(JwtAuthenticationToken token) {
+        userService.deleteCurrentUser(token.getName());
+        return ResponseEntity.noContent().build();
     }
 }

@@ -51,4 +51,12 @@ public class UserService {
 
         return Optional.of(UserMapper.convertToDTO(user));
     }
+
+    @Transactional
+    public void deleteCurrentUser(String tokenSubject) {
+        User user = userRepository.findById(UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        userRepository.delete(user);
+    }
 }
