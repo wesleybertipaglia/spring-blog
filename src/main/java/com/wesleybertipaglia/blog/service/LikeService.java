@@ -59,4 +59,13 @@ public class LikeService {
         Pageable pageable = PageRequest.of(page, size);
         return likeRepository.findByUserId(userId, pageable).map(LikeMapper::convertToDTO);
     }
+
+    @Transactional
+    public void deleteLike(UUID id, String tokenSubject) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        Like like = likeRepository.findByUserIdAndPostId(UUID.fromString(tokenSubject), post.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Like not found"));
+
+        likeRepository.delete(like);
+    }
 }
