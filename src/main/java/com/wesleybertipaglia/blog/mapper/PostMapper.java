@@ -6,7 +6,7 @@ import com.wesleybertipaglia.blog.model.Post;
 import com.wesleybertipaglia.blog.model.User;
 
 public class PostMapper {
-    public static PostResponseDTO convertToDTO(Post post) {
+    public static PostResponseDTO convertToDTO(Post post, int likesCount) {
         if (post == null) {
             return null;
         } else if (post.getId() == null) {
@@ -20,7 +20,7 @@ public class PostMapper {
         }
 
         return new PostResponseDTO(post.getId(), post.getCreator().getUsername(), post.getTitle(), post.getContent(),
-                post.getLikes());
+                likesCount);
     }
 
     public static Post convertToEntity(PostCreateDTO postCreateDTO, User user) {
