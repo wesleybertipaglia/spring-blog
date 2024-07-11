@@ -10,11 +10,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.service.UserService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -40,5 +43,11 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> getCurrentUser(JwtAuthenticationToken token) {
         return ResponseEntity.ok(userService.getCurrentUser(token.getName()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDTO> updateCurrentUser(@RequestBody UserRequestDTO userRequestDTO,
+            JwtAuthenticationToken token) {
+        return ResponseEntity.of(userService.updateCurrentUser(userRequestDTO, token.getName()));
     }
 }

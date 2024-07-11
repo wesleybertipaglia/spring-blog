@@ -1,5 +1,6 @@
 package com.wesleybertipaglia.blog.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.mapper.UserMapper;
+import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -35,5 +38,17 @@ public class UserService {
     public UserResponseDTO getCurrentUser(String tokenSubject) {
         return UserMapper.convertToDTO(userRepository.findById(UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("User not found")));
+    }
+
+    @Transactional
+    public Optional<UserResponseDTO> updateCurrentUser(UserRequestDTO userRequestDTO, String tokenSubject) {
+        User user = userRepository.findById(UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        user.setUsername(userRequestDTO.username());
+        user.setPassword(userRequestDTO.password());
+        userRepository.save(user);
+
+        return Optional.of(UserMapper.convertToDTO(user));
     }
 }
