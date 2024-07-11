@@ -12,16 +12,12 @@ import org.springframework.stereotype.Service;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.mapper.UserMapper;
 import com.wesleybertipaglia.blog.repository.UserRepository;
-import com.wesleybertipaglia.blog.repository.LikeRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> listUsers(int page, int size) {
@@ -32,6 +28,12 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDTO getUserById(UUID id) {
         return UserMapper.convertToDTO(userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found")));
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponseDTO getCurrentUser(String tokenSubject) {
+        return UserMapper.convertToDTO(userRepository.findById(UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("User not found")));
     }
 }
