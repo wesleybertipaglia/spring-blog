@@ -77,4 +77,10 @@ public class PostController {
     public ResponseEntity<LikeResponseDTO> likePost(@PathVariable UUID id, JwtAuthenticationToken token) {
         return ResponseEntity.of(likeService.createLike(id, token.getName()));
     }
+
+    @DeleteMapping("/{id}/likes")
+    public ResponseEntity<Void> unlikePost(@PathVariable UUID id, JwtAuthenticationToken token) {
+        likeService.deleteLike(id, token.getName());
+        return ResponseEntity.noContent().build();
+    }
 }
