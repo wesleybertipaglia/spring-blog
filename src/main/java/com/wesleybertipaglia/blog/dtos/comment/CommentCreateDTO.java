@@ -2,5 +2,5 @@ package com.wesleybertipaglia.blog.dtos.comment;
 
 import java.util.UUID;
 
-public record CommentCreateDTO(UUID id, UUID userId, UUID postId, String content) {
+public record CommentCreateDTO(UUID postId, String content) {
 }
