@@ -6,9 +6,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.wesleybertipaglia.blog.enums.Roles;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,6 +22,9 @@ public class User {
     private String password;
 
     private Roles role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Like> likes;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -79,6 +83,14 @@ public class User {
 
     public void setRole(Roles role) {
         this.role = role;
+    }
+
+    public Set<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<Like> likes) {
+        this.likes = likes;
     }
 
     public LocalDateTime getCreatedAt() {
