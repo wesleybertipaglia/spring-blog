@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.wesleybertipaglia.blog.dtos.post.PostCreateDTO;
 import com.wesleybertipaglia.blog.dtos.post.PostResponseDTO;
-import com.wesleybertipaglia.blog.mapper.LikeMapper;
 import com.wesleybertipaglia.blog.mapper.PostMapper;
 import com.wesleybertipaglia.blog.model.Post;
 import com.wesleybertipaglia.blog.model.User;
