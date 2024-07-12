@@ -10,23 +10,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.mapper.UserMapper;
 import com.wesleybertipaglia.blog.model.User;
 import com.wesleybertipaglia.blog.repository.UserRepository;
-import com.wesleybertipaglia.blog.repository.LikeRepository;
-import com.wesleybertipaglia.blog.mapper.LikeMapper;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> listUsers(int page, int size) {
@@ -64,11 +58,5 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         userRepository.delete(user);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<LikeResponseDTO> listLikesOfCurrentUser(int page, int size, String tokenSubject) {
-        Pageable pageable = PageRequest.of(page, size);
-        return likeRepository.findByUserId(UUID.fromString(tokenSubject), pageable).map(LikeMapper::convertToDTO);
     }
 }
