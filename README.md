@@ -49,13 +49,19 @@ Run the command `mvn test` to run the tests.
 - `POST /api/auth/signin` - Sign in
 - `POST /api/auth/signout` - Sign out
 
+### Me
+
+- `GET /api/me` - Get the current user
+- `PUT /api/me` - Update the current user
+- `DELETE /api/me` - Delete the current user
+- `GET /api/me/posts` - Get all posts by the current user
+- `GET /api/me/likes` - Get all posts liked by the current user
+- `GET /api/me/comments` - Get all comments by the current user
+
 ### Users
 
 - `GET /api/users` - Get all users
 - `GET /api/users/{id}` - Get a user by ID
-- `GET /api/users/{id}/posts` - Get all posts by a user
-- `GET /api/users/{id}/likes` - Get all posts liked by a user
-- `GET /api/users/{id}/comments` - Get all comments by a user
 
 ### Posts
 
@@ -67,14 +73,14 @@ Run the command `mvn test` to run the tests.
 
 ### Likes
 
-- `POST /api/posts/{postId}/likes` - Like a post
-- `DELETE /api/posts/{postId}/likes` - Unlike a post
-- `GET /api/posts/{postId}/likes` - Get all likes on a post
+- `POST /api/likes/{postId}` - Like a post
+- `DELETE /api/likes/{postId}` - Unlike a post
+- `GET /api/likes/{postId}` - Get all likes on a post
 
 ### Comments
 
-- `POST /api/posts/{postId}/comments` - Comment on a post
-- `GET /api/posts/{postId}/comments` - Get all comments on a post
+- `POST /api/comments/` - Comment on a post
+- `GET /api/comments/{postId}` - Get all comments on a post
 - `GET /api/comments/{id}` - Get a comment by ID
 - `PUT /api/comments/{id}` - Update a comment by ID
 - `DELETE /api/comments/{id}` - Delete a comment by ID
