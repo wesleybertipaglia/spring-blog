@@ -10,10 +10,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
 import com.wesleybertipaglia.blog.dtos.post.PostCreateDTO;
 import com.wesleybertipaglia.blog.dtos.post.PostResponseDTO;
-import com.wesleybertipaglia.blog.service.LikeService;
 import com.wesleybertipaglia.blog.service.PostService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,9 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PostController {
     @Autowired
     private PostService postService;
-
-    @Autowired
-    private LikeService likeService;
 
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO post, JwtAuthenticationToken token) {
@@ -61,17 +56,6 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable UUID id, JwtAuthenticationToken token) {
         postService.deletePost(id, token.getName());
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{id}/likes")
-    public ResponseEntity<LikeResponseDTO> likePost(@PathVariable UUID id, JwtAuthenticationToken token) {
-        return ResponseEntity.of(likeService.createLike(id, token.getName()));
-    }
-
-    @DeleteMapping("/{id}/likes")
-    public ResponseEntity<Void> unlikePost(@PathVariable UUID id, JwtAuthenticationToken token) {
-        likeService.deleteLike(id, token.getName());
         return ResponseEntity.noContent().build();
     }
 }
