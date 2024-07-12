@@ -62,11 +62,8 @@ public class PostService {
 
     @Transactional
     public Optional<PostResponseDTO> updatePost(UUID id, PostCreateDTO postCreateDTO, String tokenSubject) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-
-        if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
-            throw new IllegalArgumentException("User is not the owner of the post");
-        }
+        Post post = postRepository.findByIdAndUserId(id, UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         post.setTitle(postCreateDTO.title());
         post.setContent(postCreateDTO.content());
@@ -78,11 +75,8 @@ public class PostService {
 
     @Transactional
     public void deletePost(UUID id, String tokenSubject) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-
-        if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
-            throw new IllegalArgumentException("User is not the creator of the post");
-        }
+        Post post = postRepository.findByIdAndUserId(id, UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         postRepository.delete(post);
     }

@@ -64,15 +64,6 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/likes")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<Page<LikeResponseDTO>> listLikes(
-            @PathVariable UUID id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(likeService.listLikesByPost(page, size, id));
-    }
-
     @PostMapping("/{id}/likes")
     public ResponseEntity<LikeResponseDTO> likePost(@PathVariable UUID id, JwtAuthenticationToken token) {
         return ResponseEntity.of(likeService.createLike(id, token.getName()));
