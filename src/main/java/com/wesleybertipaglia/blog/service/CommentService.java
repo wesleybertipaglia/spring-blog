@@ -51,7 +51,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CommentResponseDTO> listCommentsByUser(int page, int size, String tokenSubject) {
+    public Page<CommentResponseDTO> listCommentsOfCurrentUser(int page, int size, String tokenSubject) {
         Pageable pageable = PageRequest.of(page, size);
         User user = userRepository.findById(UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -66,14 +66,8 @@ public class CommentService {
 
     @Transactional
     public Optional<CommentResponseDTO> updateComment(UUID id, CommentCreateDTO commentCreateDTO, String tokenSubject) {
-        Comment comment = commentRepository.findById(id)
+        Comment comment = commentRepository.findByIdAndUserId(id, UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
-        User user = userRepository.findById(UUID.fromString(tokenSubject))
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        if (!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("User is not the owner of the comment");
-        }
 
         comment.setContent(commentCreateDTO.content());
         return Optional.of(CommentMapper.convertToDTO(commentRepository.save(comment)));
@@ -81,15 +75,8 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(UUID id, String tokenSubject) {
-        Comment comment = commentRepository.findById(id)
+        Comment comment = commentRepository.findByIdAndUserId(id, UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
-
-        User user = userRepository.findById(UUID.fromString(tokenSubject))
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        if (!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("User is not the owner of the comment");
-        }
 
         commentRepository.delete(comment);
     }
