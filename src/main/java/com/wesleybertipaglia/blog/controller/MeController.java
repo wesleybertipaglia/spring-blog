@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wesleybertipaglia.blog.dtos.comment.CommentResponseDTO;
 import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
+import com.wesleybertipaglia.blog.dtos.post.PostResponseDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserRequestDTO;
 import com.wesleybertipaglia.blog.dtos.user.UserResponseDTO;
 import com.wesleybertipaglia.blog.service.CommentService;
 import com.wesleybertipaglia.blog.service.LikeService;
+import com.wesleybertipaglia.blog.service.PostService;
 import com.wesleybertipaglia.blog.service.UserService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MeController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     @Autowired
     private LikeService likeService;
@@ -48,6 +53,14 @@ public class MeController {
     public ResponseEntity<Void> deleteCurrentUser(JwtAuthenticationToken token) {
         userService.deleteCurrentUser(token.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<Page<PostResponseDTO>> listPostsOfCurrentUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            JwtAuthenticationToken token) {
+        return ResponseEntity.ok(postService.listPostsOfCurrentUser(page, size, token.getName()));
     }
 
     @GetMapping("/likes")
