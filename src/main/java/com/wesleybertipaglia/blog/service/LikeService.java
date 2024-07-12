@@ -39,25 +39,24 @@ public class LikeService {
         User user = userRepository.findById(UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Like like = new Like(user, post);
-
         if (likeRepository.existsByUserIdAndPostId(user.getId(), post.getId())) {
             throw new EntityExistsException("Like already exists");
         }
 
+        Like like = new Like(user, post);
         return Optional.of(LikeMapper.convertToDTO(likeRepository.save(like)));
     }
 
     @Transactional(readOnly = true)
-    public Page<LikeResponseDTO> listLikesByPost(int page, int size, UUID postId) {
+    public Page<LikeResponseDTO> listLikes(int page, int size, UUID postId) {
         Pageable pageable = PageRequest.of(page, size);
         return likeRepository.findByPostId(postId, pageable).map(LikeMapper::convertToDTO);
     }
 
     @Transactional(readOnly = true)
-    public Page<LikeResponseDTO> listLikesByUser(int page, int size, UUID userId) {
+    public Page<LikeResponseDTO> listLikesOfCurrentUser(int page, int size, String tokenSubject) {
         Pageable pageable = PageRequest.of(page, size);
-        return likeRepository.findByUserId(userId, pageable).map(LikeMapper::convertToDTO);
+        return likeRepository.findByUserId(UUID.fromString(tokenSubject), pageable).map(LikeMapper::convertToDTO);
     }
 
     @Transactional
