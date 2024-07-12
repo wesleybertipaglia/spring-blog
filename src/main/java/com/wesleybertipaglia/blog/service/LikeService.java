@@ -35,34 +35,41 @@ public class LikeService {
 
     @Transactional
     public Optional<LikeResponseDTO> createLike(UUID postId, String tokenSubject) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         User user = userRepository.findById(UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        Like like = new Like(user, post);
 
         if (likeRepository.existsByUserIdAndPostId(user.getId(), post.getId())) {
             throw new EntityExistsException("Like already exists");
         }
 
-        return Optional.of(LikeMapper.convertToDTO(likeRepository.save(like)));
+        Like like = new Like(user, post);
+        int likesCount = likeRepository.countByPostId(postId);
+        return Optional.of(LikeMapper.convertToDTO(likeRepository.save(like), likesCount + 1));
     }
 
     @Transactional(readOnly = true)
-    public Page<LikeResponseDTO> listLikesByPost(int page, int size, UUID postId) {
+    public Page<LikeResponseDTO> listLikes(int page, int size, UUID postId) {
         Pageable pageable = PageRequest.of(page, size);
-        return likeRepository.findByPostId(postId, pageable).map(LikeMapper::convertToDTO);
+        return likeRepository.findByPostId(postId, pageable).map(like -> {
+            int likesCount = likeRepository.countByPostId(postId);
+            return LikeMapper.convertToDTO(like, likesCount);
+        });
     }
 
     @Transactional(readOnly = true)
-    public Page<LikeResponseDTO> listLikesByUser(int page, int size, UUID userId) {
+    public Page<LikeResponseDTO> listLikesOfCurrentUser(int page, int size, String tokenSubject) {
         Pageable pageable = PageRequest.of(page, size);
-        return likeRepository.findByUserId(userId, pageable).map(LikeMapper::convertToDTO);
+        return likeRepository.findByUserId(UUID.fromString(tokenSubject), pageable).map(like -> {
+            int likesCount = likeRepository.countByPostId(like.getPost().getId());
+            return LikeMapper.convertToDTO(like, likesCount);
+        });
     }
 
     @Transactional
-    public void deleteLike(UUID id, String tokenSubject) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+    public void deleteLike(UUID postId, String tokenSubject) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
         Like like = likeRepository.findByUserIdAndPostId(UUID.fromString(tokenSubject), post.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Like not found"));
 

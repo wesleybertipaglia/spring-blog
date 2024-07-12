@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.wesleybertipaglia.blog.dtos.post.PostCreateDTO;
 import com.wesleybertipaglia.blog.dtos.post.PostResponseDTO;
+import com.wesleybertipaglia.blog.mapper.LikeMapper;
 import com.wesleybertipaglia.blog.mapper.PostMapper;
 import com.wesleybertipaglia.blog.model.Post;
 import com.wesleybertipaglia.blog.model.User;
@@ -53,6 +54,15 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PostResponseDTO> listPostsOfCurrentUser(int page, int size, String tokenSubject) {
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findAllByCreatorId(UUID.fromString(tokenSubject), pageable).map(post -> {
+            int likesCount = likeRepository.countByPostId(post.getId());
+            return PostMapper.convertToDTO(post, likesCount);
+        });
+    }
+
+    @Transactional(readOnly = true)
     public Optional<PostResponseDTO> getPost(UUID id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
@@ -62,11 +72,8 @@ public class PostService {
 
     @Transactional
     public Optional<PostResponseDTO> updatePost(UUID id, PostCreateDTO postCreateDTO, String tokenSubject) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-
-        if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
-            throw new IllegalArgumentException("User is not the owner of the post");
-        }
+        Post post = postRepository.findByIdAndCreatorId(id, UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         post.setTitle(postCreateDTO.title());
         post.setContent(postCreateDTO.content());
@@ -78,11 +85,8 @@ public class PostService {
 
     @Transactional
     public void deletePost(UUID id, String tokenSubject) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-
-        if (!post.getCreator().getId().equals(UUID.fromString(tokenSubject))) {
-            throw new IllegalArgumentException("User is not the creator of the post");
-        }
+        Post post = postRepository.findByIdAndCreatorId(id, UUID.fromString(tokenSubject))
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         postRepository.delete(post);
     }
