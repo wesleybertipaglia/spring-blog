@@ -45,19 +45,26 @@ public class LikeService {
         }
 
         Like like = new Like(user, post);
-        return Optional.of(LikeMapper.convertToDTO(likeRepository.save(like)));
+        int likesCount = likeRepository.countByPostId(postId);
+        return Optional.of(LikeMapper.convertToDTO(likeRepository.save(like), likesCount + 1));
     }
 
     @Transactional(readOnly = true)
     public Page<LikeResponseDTO> listLikes(int page, int size, UUID postId) {
         Pageable pageable = PageRequest.of(page, size);
-        return likeRepository.findByPostId(postId, pageable).map(LikeMapper::convertToDTO);
+        return likeRepository.findByPostId(postId, pageable).map(like -> {
+            int likesCount = likeRepository.countByPostId(postId);
+            return LikeMapper.convertToDTO(like, likesCount);
+        });
     }
 
     @Transactional(readOnly = true)
     public Page<LikeResponseDTO> listLikesOfCurrentUser(int page, int size, String tokenSubject) {
         Pageable pageable = PageRequest.of(page, size);
-        return likeRepository.findByUserId(UUID.fromString(tokenSubject), pageable).map(LikeMapper::convertToDTO);
+        return likeRepository.findByUserId(UUID.fromString(tokenSubject), pageable).map(like -> {
+            int likesCount = likeRepository.countByPostId(like.getPost().getId());
+            return LikeMapper.convertToDTO(like, likesCount);
+        });
     }
 
     @Transactional
