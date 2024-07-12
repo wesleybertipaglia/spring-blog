@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/users", "/users/{id}").permitAll()
                         .requestMatchers("/posts", "/posts/{id}", "/posts/{id}/likes").permitAll()
                         .requestMatchers("/comments", "/comments/{id}", "/comments/post/{id}").permitAll()
+                        .requestMatchers("/likes", "/likes/post/{id}").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

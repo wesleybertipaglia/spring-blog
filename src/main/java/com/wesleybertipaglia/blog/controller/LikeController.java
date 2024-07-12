@@ -15,11 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wesleybertipaglia.blog.dtos.like.LikeCreateDTO;
 import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
 import com.wesleybertipaglia.blog.service.LikeService;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/likes")
@@ -27,10 +24,9 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @PostMapping
-    public ResponseEntity<LikeResponseDTO> createLike(@RequestBody LikeCreateDTO likeCreateDTO,
-            JwtAuthenticationToken token) {
-        return ResponseEntity.of(likeService.createLike(likeCreateDTO, token.getName()));
+    @PostMapping("/post/{id}")
+    public ResponseEntity<LikeResponseDTO> createLike(@PathVariable UUID id, JwtAuthenticationToken token) {
+        return ResponseEntity.of(likeService.createLike(id, token.getName()));
     }
 
     @GetMapping("/post/{id}")
@@ -42,7 +38,7 @@ public class LikeController {
         return ResponseEntity.ok(likeService.listLikes(page, size, id));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/post/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable UUID id, JwtAuthenticationToken token) {
         likeService.deleteLike(id, token.getName());
         return ResponseEntity.noContent().build();
