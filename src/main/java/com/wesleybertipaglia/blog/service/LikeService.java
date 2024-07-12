@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.wesleybertipaglia.blog.dtos.like.LikeCreateDTO;
 import com.wesleybertipaglia.blog.dtos.like.LikeResponseDTO;
 import com.wesleybertipaglia.blog.mapper.LikeMapper;
 import com.wesleybertipaglia.blog.model.Like;
@@ -34,8 +35,9 @@ public class LikeService {
     private UserRepository userRepository;
 
     @Transactional
-    public Optional<LikeResponseDTO> createLike(UUID postId, String tokenSubject) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+    public Optional<LikeResponseDTO> createLike(LikeCreateDTO likeCreateDTO, String tokenSubject) {
+        Post post = postRepository.findById(likeCreateDTO.postId())
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         User user = userRepository.findById(UUID.fromString(tokenSubject))
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
